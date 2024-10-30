@@ -7,6 +7,9 @@ import 'package:doctoc/features/onboarding/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../features/signup/logic/cubit/signup_cubit.dart';
+import '../../features/signup/ui/signup_screen.dart';
+
 class AppRouter {
   Route generateRoute(RouteSettings settings) {
     final arguments = settings.arguments;
@@ -15,7 +18,13 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const OnboardingScreen());
       case Routes.homeScreen:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-
+case Routes.signUpScreen:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider(
+            create: (context) => getIt<SignupCubit>(),
+            child: const SignupScreen(),
+          ),
+        );
       case Routes.loginScreen:
         return MaterialPageRoute(
             builder: (_) => BlocProvider(
