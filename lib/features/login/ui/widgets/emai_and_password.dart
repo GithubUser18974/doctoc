@@ -1,3 +1,4 @@
+import 'package:doctoc/core/helpers/app_regex.dart';
 import 'package:doctoc/core/routing/app_router.dart';
 import 'package:doctoc/features/login/logic/cubit/login_cubit.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +29,25 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
     // TODO: implement initState
     super.initState();
     passwordController = context.read<LoginCubit>().passwordController;
+    setupPasswordControllerListener();
   }
-
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    passwordController.dispose();
+    super.dispose();
+  }
+  void setupPasswordControllerListener(){
+    passwordController.addListener((){
+      setState(() {
+        hasLowerCase=AppRegex.hasLowerCase(passwordController.text);
+        hasUpperCase=AppRegex.hasUpperCase(passwordController.text);
+        hasSpecialCharchter=AppRegex.hasSpecialCharacter(passwordController.text);
+        hasNumber=AppRegex.hasNumber(passwordController.text);
+        hasMinLength=AppRegex.hasMinLength(passwordController.text);
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -40,7 +58,7 @@ class _EmailAndPasswordState extends State<EmailAndPassword> {
               hintText: 'Email',
               controller: context.read<LoginCubit>().emailController,
               validator: (value) {
-                if (value == null || value.isEmpty) {
+                if (value == null || value.isEmpty||!AppRegex.isEmailValid(value)) {
                   return 'Please enter a valid email';
                 }
               },
