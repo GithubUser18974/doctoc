@@ -1,18 +1,86 @@
+import 'package:doctoc/core/helpers/spacing.dart';
+import 'package:doctoc/core/theming/styles.dart';
+import 'package:doctoc/core/widgets/app_text_button.dart';
+import 'package:doctoc/core/widgets/app_text_form_field.dart';
+import 'package:doctoc/features/login/data/models/login_request_body.dart';
+import 'package:doctoc/features/login/logic/cubit/login_cubit.dart';
+import 'package:doctoc/features/login/ui/widgets/dont_have_account_text.dart';
+import 'package:doctoc/features/login/ui/widgets/terms_and_conditions_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class LoginScreen extends StatelessWidget {
+import 'widgets/emai_and_password.dart';
+import 'widgets/login_bloc_listener.dart';
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return  Scaffold(
-     appBar: AppBar(
-      title:const Text('Login Screen'),
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
-     ),
-     body: const Center(
-      child: Text('Login Screen Is working'),
-     ),
+class _LoginScreenState extends State<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
+  bool isObscuredText = true;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 30.h),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Welcome Back',
+                  style: TextStyles.font24BlueBold,
+                ),
+                verticalSpace(8),
+                Text(
+                  'We\'re excited to have you back, Can\'t wait to see what you have been up since you last login',
+                  style: TextStyles.font14GrayRegular,
+                ),
+                verticalSpace(36),
+                Column(
+                  children: [
+                    const EmailAndPassword(),
+                    
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: Text(
+                        'Forget Password',
+                        style: TextStyles.font13BlueRegular,
+                      ),
+                    ),
+                    verticalSpace(40),
+                    AppTextButton(
+                      buttonText: 'Login',
+                      textStyle: TextStyles.font16WhiteSemiBold,
+                      onPressed: () {
+                        validateThenDoLogin(context);
+                      },
+                    ),
+                    verticalSpace(16),
+                    const TermsAndConditionsText(),
+                    verticalSpace(60),
+                    const DontHaveAccountText(),
+                    const LoginBlocListener(),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
+  }
+  
+  void validateThenDoLogin(BuildContext context) {
+    if(context.read<LoginCubit>().formKey.currentState!.validate()){
+            context.read<LoginCubit>().emitLoginStates();
+
+    }
   }
 }
